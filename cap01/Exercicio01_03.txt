@@ -1,0 +1,3 @@
+- conhecendo a interface do pgAdmin
+
+SELECT current_timestamp;

@@ -1,0 +1,52 @@
+Enunciado
+You have set up your working environment. 
+You have got PostgreSQL up and running. 
+You have even installed the sqlda database. 
+Now it is time to take a look at the data you have in hand 
+and identify its characteristics.
+Please create SQL statements to fetch the first 20 rows of each table in your sqlda database. 
+Please answer the following two questions: 
+Which table is empty? 
+Which table has fewer than 20 records?
+
+Fui pesquisar como listar as tabelas disponíveis em PostgreSQL
+(o livro fornece os nomes das tabelas, mas eu fui pesquisar para quando eu não tiver os nomes)
+
+https://pt.stackoverflow.com/questions/182652/como-pegar-os-nomes-de-todas-as-tabelas-de-database-postgresql
+
+Para obter o nome de todas as tabelas, use o comando abaixo:
+SELECT table_name 
+FROM information_schema.tables
+WHERE table_schema='public'
+AND table_type='BASE TABLE';
+
+Query base
+SELECT * FROM <tabela> LIMIT 20;
+
+nomes das tabelas:
+"closest_dealerships" // SELECT * FROM closest_dealerships LIMIT 20;
+"countries" // SELECT * FROM countries LIMIT 20;
+"customer_sales" // SELECT * FROM customer_sales LIMIT 20;
+"customer_sales_copy" // SELECT * FROM customer_sales_copy LIMIT 20;
+"customer_survey" // SELECT * FROM customer_survey LIMIT 20;
+"customers" // SELECT * FROM customers LIMIT 20;
+"dealerships" // SELECT * FROM dealerships LIMIT 20;
+"emails" // SELECT * FROM emails LIMIT 20;
+"products" // SELECT * FROM products LIMIT 20;
+"public_transportation_by_zip" // SELECT * FROM public_transportation_by_zip LIMIT 20;
+"sales" // SELECT * FROM sales LIMIT 20;
+"salespeople" // SELECT * FROM salespeople LIMIT 20;
+"top_cities_data" // SELECT * FROM top_cities_data LIMIT 20;
+
+Questões
+
+1 - Which table is empty? 
+countries
+
+2 - Which table has fewer than 20 records?
+products - 12
+
+
+Erros
+
+

@@ -1,0 +1,9 @@
+- Step 3
+CREATE DATABASE sqlda;
+\c sqlda;
+
+- Step 4
+\i 'caminho do arquivo data.dump'
+
+- Step 6
+SELECT * FROM public.products LIMIT 5;
