@@ -1,0 +1,179 @@
+-- creating table from an existing dataset
+CREATE TABLE {table_name} AS (
+  {select_query}
+);
+
+-- {select_query} is any query that can be run in the database
+-- example
+SELECT * FROM products LIMIT 5;
+
+-- this statement only creates a table 
+CREATE TABLE first_products_sample AS (
+	SELECT * FROM products LIMIT 5
+);
+
+-- to see the new table, run the query
+SELECT * FROM first_products_sample;
+
+1	"Lemon"	2016	"scooter"	399.99	"2015-10-28 00:00:00"	"2018-02-03 00:00:00"
+2	"Lemon Limited Edition"	2017	"scooter"	799.99	"2016-08-30 00:00:00"	"2016-11-24 00:00:00"
+3	"Lemon"	2019	"scooter"	499.99	"2018-12-27 00:00:00"	"2024-08-24 00:00:00"
+5	"Blade"	2020	"scooter"	699.99	"2020-02-17 00:00:00"	"2020-09-23 00:00:00"
+7	"Bat"	2022	"scooter"	599.99	"2022-06-07 00:00:00"	
+
+-- another way to create table: SELECT..INTO
+SELECT * 
+INTO second_products_sample
+FROM products LIMIT 5;
+
+-- to see results
+SELECT * FROM second_products_sample;
+
+1	"Lemon"	2016	"scooter"	399.99	"2015-10-28 00:00:00"	"2018-02-03 00:00:00"
+2	"Lemon Limited Edition"	2017	"scooter"	799.99	"2016-08-30 00:00:00"	"2016-11-24 00:00:00"
+3	"Lemon"	2019	"scooter"	499.99	"2018-12-27 00:00:00"	"2024-08-24 00:00:00"
+5	"Blade"	2020	"scooter"	699.99	"2020-02-17 00:00:00"	"2020-09-23 00:00:00"
+7	"Bat"	2022	"scooter"	599.99	"2022-06-07 00:00:00"	
+
+-- describing columns
+-- command line - psql
+\d first_products_sample
+
+  Table "public.first_products_sample"
+        Column         |            Type             | Collation | Nullable | Default
+-----------------------+-----------------------------+-----------+----------+---------
+ product_id            | bigint                      |           |          |
+ model                 | text                        |           |          |
+ year                  | bigint                      |           |          |
+ product_type          | text                        |           |          |
+ base_msrp             | numeric                     |           |          |
+ production_start_date | timestamp without time zone |           |          |
+ production_end_date   | timestamp without time zone |           |          |
+
+-- describing columns
+-- query
+
+SELECT COLUMN_NAME, DATA_TYPE, ORDINAL_POSITION
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'first_products_sample';
+
+COLUMN_NAME | DATA_TYPE | ORDINAL_POSITION
+"production_start_date"	"timestamp without time zone"	6
+"production_end_date"	"timestamp without time zone"	7
+"year"	"bigint"	3
+"product_id"	"bigint"	1
+"base_msrp"	"numeric"	5
+"product_type"	"text"	4
+"model"	"text"	2
+
+"""
+
+From the result, you can identify all the columns, their data types, and their position in the table. 
+The difference between this approach and the \d command is that the column definitions in the 
+system tables are not displayed in a particular order, while the \d command’s result follows the 
+order in which columns are defined. For the former to be displayed in order, you must sort the 
+output by the ORDINAL_POSITION column by adding an ORDER BY clause to the SELECT statement, 
+which will be discussed in Chapter 5
+
+"""
+
+-- # Basic Data Types of SQL
+
+-- # Create Table with Explicit Definition
+-- ## Creating Blank Tables
+CREATE TABLE {table_name} (
+  {column_name_1} {data_type_1} {column_constraint_1},
+  {column_name_2} {data_type_2} {column_constraint_2},
+  {column_name_3} {data_type_3} {column_constraint_3},
+  …
+);
+
+CREATE TABLE employees (
+    employee_name VARCHAR(100),
+    salary NUMERIC(12,2）
+);
+
+SELECT * FROM employees;
+
+
+-- ## Column Constraints and Table Constraints
+
+CREATE TABLE employees (
+    employee_name VARCHAR(100) NOT NULL,
+    employee_ssn CHAR(9) UNIQUE,
+    salary NUMERIC(12,2）CHECK (salary > 0),
+    employee_vacation INTEGER DEFAULT 20
+);
+
+CREATE TABLE employees (
+  employee_name VARCHAR(100) NOT NULL,
+  employee_ssn CHAR(9) UNIQUE,
+  salary NUMERIC(12,2),
+  bonus NUMERIC(12,2),
+  employee_vacation INTEGER DEFAULT 20,
+  CHECK (salary + bonus > 0),
+  CHECK (employee_vacation > 0)
+);
+
+CREATE TABLE employees (
+  employee_name VARCHAR(100),
+  employee_ssn CHAR(9) PRIMARY KEY,
+  salary NUMERIC(12,2)
+);
+
+CREATE TABLE employee_dependents (
+  employee_ssn CHAR(9),
+  employee_dependent_name VARCHAR(100),
+  PRIMARY KEY (employee_ssn, employee_dependent_name)
+);
+
+CREATE TABLE sales (
+  sales_order_id integer,
+  product_id integer 
+    REFERENCES products (product_id),
+  customer_id integer 
+    REFERENCES customers (customer_id),
+  sales_amount money
+);
+
+-- ## Insert Values into Table
+INSERT INTO {table_name} ({column_1], {column_2}, …)
+VALUES ({column_value_1}, {column_value_2}, … );
+
+INSERT INTO products_new (
+  product_id, model, year, product_type, base_msrp,
+  production_start_date, production_end_date
+) VALUES (
+  13, 'Nimbus 5000', 2017, 'scooter', 500.00,
+  '2017-03-03', '2023-03-03'
+);
+
+INSERT INTO products_new (
+  product_id, model, year, product_type, base_msrp,
+  production_start_date, production_end_date
+) VALUES 
+(
+  14, 'Nimbus 6000', 2017, 'scooter', 600.00,
+  '2017-04-03', '2023-04-03'
+),
+(
+  15, 'Nimbus 7000', 2017, 'scooter', 700.00,
+  '2017-05-03', '2023-05-03'
+);
+
+INSERT INTO {table_name} ({column_1], {column_2}, …}
+{select_query};
+
+INSERT INTO products_new ( 
+    product_id, model, year, product_type, base_msrp,
+    production_start_date, production_end_date
+) 
+SELECT * 
+FROM products;
+
+-- # Dropping Tables
+DROP TABLE {table_name};
+
+DROP TABLE products_new;
+
+DROP TABLE IF EXISTS products_new;
